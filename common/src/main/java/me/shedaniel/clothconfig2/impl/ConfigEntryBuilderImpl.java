@@ -127,10 +127,15 @@ public class ConfigEntryBuilderImpl implements ConfigEntryBuilder {
     public TextDescriptionBuilder startTextDescription(Component value) {
         return new TextDescriptionBuilder(resetButtonKey, new TextComponent(UUID.randomUUID().toString()), value);
     }
-    
+
     @Override
     public <T extends Enum<?>> EnumSelectorBuilder<T> startEnumSelector(Component fieldNameKey, Class<T> clazz, T value) {
         return new EnumSelectorBuilder<>(resetButtonKey, fieldNameKey, clazz, value);
+    }
+
+    @Override
+    public <T extends Enum<?>> EnumSliderBuilder<T> startEnumSlider(Component fieldNameKey, Class<T> clazz, T value) {
+        return new EnumSliderBuilder<>(resetButtonKey, fieldNameKey, clazz, value);
     }
     
     @Override

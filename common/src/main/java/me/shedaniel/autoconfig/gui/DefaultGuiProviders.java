@@ -270,7 +270,7 @@ public class DefaultGuiProviders {
                 field -> !field.getType().isPrimitive(),
                 ConfigEntry.Gui.CollapsibleObject.class
         );
-        
+
         registry.registerPredicateProvider(
                 (i13n, field, config, defaults, guiProvider) -> {
                     Object[] enumConstants = field.getType().getEnumConstants();
@@ -290,6 +290,22 @@ public class DefaultGuiProviders {
                     );
                 },
                 field -> field.getType().isEnum() && field.isAnnotationPresent(ConfigEntry.Gui.EnumHandler.class) && field.getAnnotation(ConfigEntry.Gui.EnumHandler.class).option() == ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON
+        );
+
+        registry.registerPredicateProvider(
+            (i13n, field, config, defaults, guiProvider) -> {
+                return Collections.singletonList(
+                    ENTRY_BUILDER.startEnumSlider(
+                        new TranslatableComponent(i13n),
+                        (Class)field.getType(),
+                        getUnsafely(field, config, getUnsafely(field, defaults))
+                    )
+                        .setDefaultValue(() -> getUnsafely(field, defaults))
+                        .setSaveConsumer(newValue -> setUnsafely(field, config, newValue))
+                        .build()
+                );
+            },
+            field -> field.getType().isEnum() && field.isAnnotationPresent(ConfigEntry.Gui.EnumHandler.class) && field.getAnnotation(ConfigEntry.Gui.EnumHandler.class).option() == ConfigEntry.Gui.EnumHandler.EnumDisplayOption.SLIDER
         );
         
         //noinspection unchecked

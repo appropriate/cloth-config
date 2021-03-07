@@ -150,7 +150,8 @@ public class ConfigEntry {
             
             enum EnumDisplayOption {
                 DROPDOWN,
-                BUTTON
+                BUTTON,
+                SLIDER
             }
         }
     }

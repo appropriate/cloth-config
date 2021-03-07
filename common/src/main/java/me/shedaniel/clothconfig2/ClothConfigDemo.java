@@ -116,6 +116,7 @@ public class ClothConfigDemo {
         SubCategoryBuilder sliders = entryBuilder.startSubCategory(new TextComponent("Sliders")).setExpanded(true);
         sliders.add(entryBuilder.startIntSlider(new TextComponent("Int Slider"), 50, 0, 100).setDefaultValue(0).build());
         sliders.add(entryBuilder.startLongSlider(new TextComponent("Long Slider"), 10_000_000_050l, 10_000_000_000l, 10_000_000_100l).setDefaultValue(10_000_000_020l).build());
+        sliders.add(entryBuilder.startEnumSlider(new TextComponent("Speed"), Speed.class, Speed.SLOW).setTextGetter(speed -> new TextComponent(speed.label)).setDefaultValue(Speed.NORMAL).setSaveConsumer(speed -> System.out.println("our speed is: " + speed)).build());
         sliders.add(entryBuilder.startIntSliderList(new TextComponent("Int Slider List"), Lists.newArrayList(0, 25, 50, 75, 100), 0, 100).setDefaultValue(Lists.newArrayList(50)).setCellDefaultValue(80).setTextGetter(value -> new TextComponent(value + "%")).setSaveConsumer(list -> System.out.println("check out this list " + list)).build());
         sliders.add(entryBuilder.startLongSliderList(new TextComponent("Long Slider List"), Lists.newArrayList(10_000_000_050l), 10_000_000_000l, 10_000_000_100l).setDefaultValue(Lists.newArrayList(10_000_000_020l)).setCellDefaultValue(10_000_000_080l).setSaveConsumer(list -> System.out.println("check out this long list " + list)).build());
         testing.addEntry(sliders.build());
@@ -172,5 +173,20 @@ public class ClothConfigDemo {
         ).build());
         builder.transparentBackground();
         return builder;
+    }
+
+    static enum Speed {
+        SLOW("Slow"),
+        NORMAL("Normal"),
+        FAST("Fast"),
+        LIGHT_SPEED("Light Speed"),
+        RIDICULOUS_SPEED("Ridiculous Speed"),
+        LUDICROUS_SPEED("LUDICROUS SPEED");
+
+        String label;
+
+        Speed(String label) {
+            this.label = label;
+        }
     }
 }

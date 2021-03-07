@@ -90,6 +90,8 @@ public interface ConfigEntryBuilder {
     TextDescriptionBuilder startTextDescription(Component value);
     
     <T extends Enum<?>> EnumSelectorBuilder<T> startEnumSelector(Component fieldNameKey, Class<T> clazz, T value);
+
+    <T extends Enum<?>> EnumSliderBuilder<T> startEnumSlider(Component fieldNameKey, Class<T> clazz, T value);
     
     <T> SelectorBuilder<T> startSelector(Component fieldNameKey, T[] valuesArray, T value);
     
