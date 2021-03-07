@@ -373,7 +373,7 @@ public class DefaultGuiProviders {
                             new TranslatableComponent(i13n),
                             configValue,
                             false,
-                            null,
+                            (Function<List<Object>, Optional<Component[]>>)null,
                             abstractConfigListEntries -> {
                             },
                             () -> getUnsafely(field, defaults),

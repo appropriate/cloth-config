@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
@@ -48,11 +49,17 @@ public class DoubleListListEntry extends AbstractTextFieldListListEntry<Double, 
     public DoubleListListEntry(Component fieldName, List<Double> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<Double>> saveConsumer, Supplier<List<Double>> defaultValue, Component resetButtonKey, boolean requiresRestart) {
         this(fieldName, value, defaultExpanded, tooltipSupplier, saveConsumer, defaultValue, resetButtonKey, requiresRestart, true, true);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public DoubleListListEntry(Component fieldName, List<Double> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<Double>> saveConsumer, Supplier<List<Double>> defaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
-        super(fieldName, value, defaultExpanded, tooltipSupplier, saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, DoubleListCell::new);
+        this(fieldName, value, defaultExpanded, supplierAsFunction(tooltipSupplier), saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public DoubleListListEntry(Component fieldName, List<Double> value, boolean defaultExpanded, Function<List<Double>, Optional<Component[]>> tooltipGetter, Consumer<List<Double>> saveConsumer, Supplier<List<Double>> defaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
+        super(fieldName, value, defaultExpanded, tooltipGetter, saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, DoubleListCell::new);
         this.minimum = Double.NEGATIVE_INFINITY;
         this.maximum = Double.POSITIVE_INFINITY;
     }

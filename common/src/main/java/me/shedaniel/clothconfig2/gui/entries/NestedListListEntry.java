@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -48,10 +49,17 @@ import java.util.function.Supplier;
 @Environment(EnvType.CLIENT)
 public final class NestedListListEntry<T, INNER extends AbstractConfigListEntry<T>> extends AbstractListListEntry<T, NestedListCell<T, INNER>, NestedListListEntry<T, INNER>> {
     private final List<ReferenceProvider<?>> referencableEntries = Lists.newArrayList();
-    
+
     @ApiStatus.Internal
+    @Deprecated
     public NestedListListEntry(Component fieldName, List<T> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<T>> saveConsumer, Supplier<List<T>> defaultValue, Component resetButtonKey, boolean deleteButtonEnabled, boolean insertInFront, BiFunction<T, NestedListListEntry<T, INNER>, INNER> createNewCell) {
-        super(fieldName, value, defaultExpanded, null, null, defaultValue, resetButtonKey, false, deleteButtonEnabled, insertInFront, (t, nestedListListEntry) -> new NestedListCell<>(t, nestedListListEntry, createNewCell.apply(t, nestedListListEntry)));
+        this(fieldName, value, defaultExpanded, supplierAsFunction(tooltipSupplier), saveConsumer, defaultValue, resetButtonKey, deleteButtonEnabled, insertInFront, createNewCell);
+    }
+
+    @ApiStatus.Internal
+    public NestedListListEntry(Component fieldName, List<T> value, boolean defaultExpanded, Function<List<T>, Optional<Component[]>> tooltipGetter, Consumer<List<T>> saveConsumer, Supplier<List<T>> defaultValue, Component resetButtonKey, boolean deleteButtonEnabled, boolean insertInFront, BiFunction<T, NestedListListEntry<T, INNER>, INNER> createNewCell) {
+        super(fieldName, value, defaultExpanded, (Function<List<T>, Optional<Component[]>>)null, null, defaultValue, resetButtonKey, false, deleteButtonEnabled, insertInFront, (t, nestedListListEntry) -> new NestedListCell<>(t, nestedListListEntry, createNewCell.apply(t, nestedListListEntry)));
+
         for (NestedListCell<T, INNER> cell : cells) {
             referencableEntries.add(cell.nestedEntry);
         }

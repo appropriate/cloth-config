@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
@@ -48,11 +49,17 @@ public class FloatListListEntry extends AbstractTextFieldListListEntry<Float, Fl
     public FloatListListEntry(Component fieldName, List<Float> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<Float>> saveConsumer, Supplier<List<Float>> defaultValue, Component resetButtonKey, boolean requiresRestart) {
         this(fieldName, value, defaultExpanded, tooltipSupplier, saveConsumer, defaultValue, resetButtonKey, requiresRestart, true, true);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public FloatListListEntry(Component fieldName, List<Float> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<Float>> saveConsumer, Supplier<List<Float>> defaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
-        super(fieldName, value, defaultExpanded, tooltipSupplier, saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, FloatListCell::new);
+        this(fieldName, value, defaultExpanded, supplierAsFunction(tooltipSupplier), saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public FloatListListEntry(Component fieldName, List<Float> value, boolean defaultExpanded, Function<List<Float>, Optional<Component[]>> tooltipGetter, Consumer<List<Float>> saveConsumer, Supplier<List<Float>> defaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
+        super(fieldName, value, defaultExpanded, tooltipGetter, saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, FloatListCell::new);
         this.minimum = Float.NEGATIVE_INFINITY;
         this.maximum = Float.POSITIVE_INFINITY;
     }

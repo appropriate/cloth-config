@@ -37,8 +37,8 @@ public abstract class AbstractSliderListEntry<T, C extends AbstractSliderListEnt
     protected final T minimum, maximum, cellDefaultValue;
     protected Function<T, Component> textGetter;
 
-    public AbstractSliderListEntry(Component fieldName, T minimum, T maximum, List<T> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<T>> saveConsumer, Supplier<List<T>> defaultValue, T cellDefaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront, BiFunction<T, SELF, C> createNewCell) {
-        super(fieldName, value, defaultExpanded, tooltipSupplier, saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, createNewCell);
+    public AbstractSliderListEntry(Component fieldName, T minimum, T maximum, List<T> value, boolean defaultExpanded, Function<List<T>, Optional<Component[]>> tooltipGetter, Consumer<List<T>> saveConsumer, Supplier<List<T>> defaultValue, T cellDefaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront, BiFunction<T, SELF, C> createNewCell) {
+        super(fieldName, value, defaultExpanded, tooltipGetter, saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, createNewCell);
 
         this.minimum = requireNonNull(minimum);
         this.maximum = requireNonNull(maximum);

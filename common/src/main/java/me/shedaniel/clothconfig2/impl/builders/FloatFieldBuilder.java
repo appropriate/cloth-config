@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 public class FloatFieldBuilder extends FieldBuilder<Float, FloatListEntry> {
     
     private Consumer<Float> saveConsumer = null;
-    private Function<Float, Optional<Component[]>> tooltipSupplier = f -> Optional.empty();
+    private Function<Float, Optional<Component[]>> tooltipGetter = f -> Optional.empty();
     private final float value;
     private Float min = null, max = null;
     
@@ -67,24 +67,29 @@ public class FloatFieldBuilder extends FieldBuilder<Float, FloatListEntry> {
         this.defaultValue = () -> defaultValue;
         return this;
     }
-    
-    public FloatFieldBuilder setTooltipSupplier(Function<Float, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    public FloatFieldBuilder setTooltipSupplier(Function<Float, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
+    }
+
+    @Deprecated
+    public FloatFieldBuilder setTooltipGetter(Function<Float, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
     }
     
     public FloatFieldBuilder setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = f -> tooltipSupplier.get();
+        this.tooltipGetter = f -> tooltipSupplier.get();
         return this;
     }
     
     public FloatFieldBuilder setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = f -> tooltip;
+        this.tooltipGetter = f -> tooltip;
         return this;
     }
     
     public FloatFieldBuilder setTooltip(Component... tooltip) {
-        this.tooltipSupplier = f -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = f -> Optional.ofNullable(tooltip);
         return this;
     }
     
@@ -111,12 +116,11 @@ public class FloatFieldBuilder extends FieldBuilder<Float, FloatListEntry> {
     @NotNull
     @Override
     public FloatListEntry build() {
-        FloatListEntry entry = new FloatListEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, null, isRequireRestart());
+        FloatListEntry entry = new FloatListEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, tooltipGetter, isRequireRestart());
         if (min != null)
             entry.setMinimum(min);
         if (max != null)
             entry.setMaximum(max);
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
         if (errorSupplier != null)
             entry.setErrorSupplier(() -> errorSupplier.apply(entry.getValue()));
         return entry;

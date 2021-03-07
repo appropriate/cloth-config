@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public class SubCategoryListEntry extends TooltipListEntry<List<AbstractConfigListEntry>> implements Expandable {
@@ -50,10 +52,21 @@ public class SubCategoryListEntry extends TooltipListEntry<List<AbstractConfigLi
     private final CategoryLabelWidget widget;
     private final List<GuiEventListener> children;
     private boolean expanded;
-    
+
     @Deprecated
     public SubCategoryListEntry(Component categoryName, List<AbstractConfigListEntry> entries, boolean defaultExpanded) {
-        super(categoryName, null);
+        this(categoryName, entries, defaultExpanded, (Function<List<AbstractConfigListEntry>, Optional<Component[]>>)null);
+    }
+
+    @Deprecated
+    public SubCategoryListEntry(Component categoryName, List<AbstractConfigListEntry> entries, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier) {
+        this(categoryName, entries, defaultExpanded, supplierAsFunction(tooltipSupplier));
+    }
+
+    @Deprecated
+    public SubCategoryListEntry(Component categoryName, List<AbstractConfigListEntry> entries, boolean defaultExpanded, Function<List<AbstractConfigListEntry>, Optional<Component[]>> tooltipGetter) {
+        super(categoryName, tooltipGetter);
+
         this.entries = entries;
         this.expanded = defaultExpanded;
         this.widget = new CategoryLabelWidget();

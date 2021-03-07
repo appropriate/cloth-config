@@ -37,6 +37,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @SuppressWarnings("DuplicatedCode")
@@ -51,11 +52,17 @@ public class KeyCodeEntry extends TooltipListEntry<ModifierKeyCode> {
     private final Supplier<ModifierKeyCode> defaultValue;
     private final List<GuiEventListener> widgets;
     private boolean allowMouse = true, allowKey = true, allowModifiers = true;
-    
+
     @ApiStatus.Internal
     @Deprecated
     public KeyCodeEntry(Component fieldName, ModifierKeyCode value, Component resetButtonKey, Supplier<ModifierKeyCode> defaultValue, Consumer<ModifierKeyCode> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, tooltipSupplier, requiresRestart);
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public KeyCodeEntry(Component fieldName, ModifierKeyCode value, Component resetButtonKey, Supplier<ModifierKeyCode> defaultValue, Consumer<ModifierKeyCode> saveConsumer, Function<ModifierKeyCode, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, tooltipGetter, requiresRestart);
         this.defaultValue = defaultValue;
         this.value = value.copy();
         this.original = value.copy();

@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 public class SelectorBuilder<T> extends FieldBuilder<T, SelectionListEntry<T>> {
     
     private Consumer<T> saveConsumer = null;
-    private Function<T, Optional<Component[]>> tooltipSupplier = e -> Optional.empty();
+    private Function<T, Optional<Component[]>> tooltipGetter = e -> Optional.empty();
     private final T value;
     private final T[] valuesArray;
     private Function<T, Component> nameProvider = null;
@@ -72,24 +72,29 @@ public class SelectorBuilder<T> extends FieldBuilder<T, SelectionListEntry<T>> {
         this.defaultValue = () -> defaultValue;
         return this;
     }
-    
-    public SelectorBuilder<T> setTooltipSupplier(Function<T, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    public SelectorBuilder<T> setTooltipGetter(Function<T, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
+    }
+
+    @Deprecated
+    public SelectorBuilder<T> setTooltipSupplier(Function<T, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
     }
     
     public SelectorBuilder<T> setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = e -> tooltipSupplier.get();
+        this.tooltipGetter = e -> tooltipSupplier.get();
         return this;
     }
     
     public SelectorBuilder<T> setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = e -> tooltip;
+        this.tooltipGetter = e -> tooltip;
         return this;
     }
     
     public SelectorBuilder<T> setTooltip(Component... tooltip) {
-        this.tooltipSupplier = e -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = e -> Optional.ofNullable(tooltip);
         return this;
     }
     
@@ -101,8 +106,7 @@ public class SelectorBuilder<T> extends FieldBuilder<T, SelectionListEntry<T>> {
     @NotNull
     @Override
     public SelectionListEntry<T> build() {
-        SelectionListEntry<T> entry = new SelectionListEntry<>(getFieldNameKey(), valuesArray, value, getResetButtonKey(), defaultValue, saveConsumer, nameProvider, null, isRequireRestart());
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
+        SelectionListEntry<T> entry = new SelectionListEntry<>(getFieldNameKey(), valuesArray, value, getResetButtonKey(), defaultValue, saveConsumer, nameProvider, tooltipGetter, isRequireRestart());
         if (errorSupplier != null)
             entry.setErrorSupplier(() -> errorSupplier.apply(entry.getValue()));
         return entry;

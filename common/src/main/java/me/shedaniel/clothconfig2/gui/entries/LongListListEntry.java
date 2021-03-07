@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
@@ -48,11 +49,17 @@ public class LongListListEntry extends AbstractTextFieldListListEntry<Long, Long
     public LongListListEntry(Component fieldName, List<Long> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<Long>> saveConsumer, Supplier<List<Long>> defaultValue, Component resetButtonKey, boolean requiresRestart) {
         this(fieldName, value, defaultExpanded, tooltipSupplier, saveConsumer, defaultValue, resetButtonKey, requiresRestart, true, true);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public LongListListEntry(Component fieldName, List<Long> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<Long>> saveConsumer, Supplier<List<Long>> defaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
-        super(fieldName, value, defaultExpanded, tooltipSupplier, saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, LongListCell::new);
+        this(fieldName, value, defaultExpanded, supplierAsFunction(tooltipSupplier), saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public LongListListEntry(Component fieldName, List<Long> value, boolean defaultExpanded, Function<List<Long>, Optional<Component[]>> tooltipGetter, Consumer<List<Long>> saveConsumer, Supplier<List<Long>> defaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
+        super(fieldName, value, defaultExpanded, tooltipGetter, saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, LongListCell::new);
         this.minimum = Long.MIN_VALUE;
         this.maximum = Long.MAX_VALUE;
     }

@@ -47,10 +47,16 @@ public abstract class AbstractListListEntry<T, C extends AbstractListListEntry.A
     protected final BiFunction<T, SELF, C> createNewCell;
     protected Function<T, Optional<Component>> cellErrorSupplier;
     protected List<T> original;
-    
+
     @ApiStatus.Internal
+    @Deprecated
     public AbstractListListEntry(Component fieldName, List<T> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<T>> saveConsumer, Supplier<List<T>> defaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront, BiFunction<T, SELF, C> createNewCell) {
-        super(fieldName, tooltipSupplier, defaultValue, abstractListListEntry -> createNewCell.apply(null, abstractListListEntry), saveConsumer, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront);
+        this(fieldName, value, defaultExpanded, supplierAsFunction(tooltipSupplier), saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, createNewCell);
+    }
+
+    @ApiStatus.Internal
+    public AbstractListListEntry(Component fieldName, List<T> value, boolean defaultExpanded, Function<List<T>, Optional<Component[]>> tooltipGetter, Consumer<List<T>> saveConsumer, Supplier<List<T>> defaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront, BiFunction<T, SELF, C> createNewCell) {
+        super(fieldName, tooltipGetter, defaultValue, abstractListListEntry -> createNewCell.apply(null, abstractListListEntry), saveConsumer, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront);
         this.createNewCell = createNewCell;
         this.original = new ArrayList<T>(value);
         for (T f : value)

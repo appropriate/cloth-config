@@ -51,10 +51,7 @@ public class LongListEntry extends TextFieldListEntry<Long> {
     @ApiStatus.Internal
     @Deprecated
     public LongListEntry(Component fieldName, Long value, Component resetButtonKey, Supplier<Long> defaultValue, Consumer<Long> saveConsumer) {
-        super(fieldName, value, resetButtonKey, defaultValue);
-        this.minimum = -Long.MAX_VALUE;
-        this.maximum = Long.MAX_VALUE;
-        this.saveConsumer = saveConsumer;
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, null);
     }
     
     @ApiStatus.Internal
@@ -62,11 +59,17 @@ public class LongListEntry extends TextFieldListEntry<Long> {
     public LongListEntry(Component fieldName, Long value, Component resetButtonKey, Supplier<Long> defaultValue, Consumer<Long> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier) {
         this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, tooltipSupplier, false);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public LongListEntry(Component fieldName, Long value, Component resetButtonKey, Supplier<Long> defaultValue, Consumer<Long> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, value, resetButtonKey, defaultValue, tooltipSupplier, requiresRestart);
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public LongListEntry(Component fieldName, Long value, Component resetButtonKey, Supplier<Long> defaultValue, Consumer<Long> saveConsumer, Function<Long, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, value, resetButtonKey, defaultValue, tooltipGetter, requiresRestart);
         this.minimum = -Long.MAX_VALUE;
         this.maximum = Long.MAX_VALUE;
         this.saveConsumer = saveConsumer;

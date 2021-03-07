@@ -50,7 +50,7 @@ import java.util.function.Supplier;
 public class DropdownMenuBuilder<T> extends FieldBuilder<T, DropdownBoxEntry<T>> {
     protected SelectionTopCellElement<T> topCellElement;
     protected SelectionCellCreator<T> cellCreator;
-    protected Function<T, Optional<Component[]>> tooltipSupplier = str -> Optional.empty();
+    protected Function<T, Optional<Component[]>> tooltipGetter = str -> Optional.empty();
     protected Consumer<T> saveConsumer = null;
     protected Iterable<T> selections = Collections.emptyList();
     protected boolean suggestionMode = true;
@@ -82,22 +82,27 @@ public class DropdownMenuBuilder<T> extends FieldBuilder<T, DropdownBoxEntry<T>>
     }
     
     public DropdownMenuBuilder<T> setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = str -> tooltipSupplier.get();
+        this.tooltipGetter = str -> tooltipSupplier.get();
         return this;
     }
-    
-    public DropdownMenuBuilder<T> setTooltipSupplier(Function<T, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    public DropdownMenuBuilder<T> setTooltipGetter(Function<T, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
+    }
+
+    @Deprecated
+    public DropdownMenuBuilder<T> setTooltipSupplier(Function<T, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
     }
     
     public DropdownMenuBuilder<T> setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = str -> tooltip;
+        this.tooltipGetter = str -> tooltip;
         return this;
     }
     
     public DropdownMenuBuilder<T> setTooltip(Component... tooltip) {
-        this.tooltipSupplier = str -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = str -> Optional.ofNullable(tooltip);
         return this;
     }
     
@@ -123,8 +128,7 @@ public class DropdownMenuBuilder<T> extends FieldBuilder<T, DropdownBoxEntry<T>>
     @NotNull
     @Override
     public DropdownBoxEntry<T> build() {
-        DropdownBoxEntry<T> entry = new DropdownBoxEntry<>(getFieldNameKey(), getResetButtonKey(), null, isRequireRestart(), defaultValue, saveConsumer, selections, topCellElement, cellCreator);
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
+        DropdownBoxEntry<T> entry = new DropdownBoxEntry<>(getFieldNameKey(), getResetButtonKey(), tooltipGetter, isRequireRestart(), defaultValue, saveConsumer, selections, topCellElement, cellCreator);
         if (errorSupplier != null)
             entry.setErrorSupplier(() -> errorSupplier.apply(entry.getValue()));
         entry.setSuggestionMode(suggestionMode);

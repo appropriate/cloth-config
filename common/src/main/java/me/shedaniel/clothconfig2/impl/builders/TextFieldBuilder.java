@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 public class TextFieldBuilder extends FieldBuilder<String, StringListEntry> {
     
     private Consumer<String> saveConsumer = null;
-    private Function<String, Optional<Component[]>> tooltipSupplier = str -> Optional.empty();
+    private Function<String, Optional<Component[]>> tooltipGetter = str -> Optional.empty();
     private final String value;
     
     public TextFieldBuilder(Component resetButtonKey, Component fieldNameKey, String value) {
@@ -70,30 +70,34 @@ public class TextFieldBuilder extends FieldBuilder<String, StringListEntry> {
     }
     
     public TextFieldBuilder setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = str -> tooltipSupplier.get();
+        this.tooltipGetter = str -> tooltipSupplier.get();
         return this;
     }
-    
-    public TextFieldBuilder setTooltipSupplier(Function<String, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    public TextFieldBuilder setTooltipGetter(Function<String, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
+    }
+
+    @Deprecated
+    public TextFieldBuilder setTooltipSupplier(Function<String, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
     }
     
     public TextFieldBuilder setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = str -> tooltip;
+        this.tooltipGetter = str -> tooltip;
         return this;
     }
     
     public TextFieldBuilder setTooltip(Component... tooltip) {
-        this.tooltipSupplier = str -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = str -> Optional.ofNullable(tooltip);
         return this;
     }
     
     @NotNull
     @Override
     public StringListEntry build() {
-        StringListEntry entry = new StringListEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, null, isRequireRestart());
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
+        StringListEntry entry = new StringListEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, tooltipGetter, isRequireRestart());
         if (errorSupplier != null)
             entry.setErrorSupplier(() -> errorSupplier.apply(entry.getValue()));
         return entry;

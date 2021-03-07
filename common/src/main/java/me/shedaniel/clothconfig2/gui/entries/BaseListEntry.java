@@ -73,18 +73,26 @@ public abstract class BaseListEntry<T, C extends BaseListCell, SELF extends Base
     protected Component addTooltip = new TranslatableComponent("text.cloth-config.list.add"), removeTooltip = new TranslatableComponent("text.cloth-config.list.remove");
     
     @ApiStatus.Internal
+    @Deprecated
     public BaseListEntry(@NotNull Component fieldName, @Nullable Supplier<Optional<Component[]>> tooltipSupplier, @Nullable Supplier<List<T>> defaultValue, @NotNull Function<SELF, C> createNewInstance, @Nullable Consumer<List<T>> saveConsumer, Component resetButtonKey) {
         this(fieldName, tooltipSupplier, defaultValue, createNewInstance, saveConsumer, resetButtonKey, false);
     }
     
     @ApiStatus.Internal
+    @Deprecated
     public BaseListEntry(@NotNull Component fieldName, @Nullable Supplier<Optional<Component[]>> tooltipSupplier, @Nullable Supplier<List<T>> defaultValue, @NotNull Function<SELF, C> createNewInstance, @Nullable Consumer<List<T>> saveConsumer, Component resetButtonKey, boolean requiresRestart) {
         this(fieldName, tooltipSupplier, defaultValue, createNewInstance, saveConsumer, resetButtonKey, requiresRestart, true, true);
     }
-    
+
     @ApiStatus.Internal
+    @Deprecated
     public BaseListEntry(@NotNull Component fieldName, @Nullable Supplier<Optional<Component[]>> tooltipSupplier, @Nullable Supplier<List<T>> defaultValue, @NotNull Function<SELF, C> createNewInstance, @Nullable Consumer<List<T>> saveConsumer, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
-        super(fieldName, tooltipSupplier, requiresRestart);
+        this(fieldName, supplierAsFunction(tooltipSupplier), defaultValue, createNewInstance, saveConsumer, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront);
+    }
+
+    @ApiStatus.Internal
+    public BaseListEntry(@NotNull Component fieldName, @Nullable Function<List<T>, Optional<Component[]>> tooltipGetter, @Nullable Supplier<List<T>> defaultValue, @NotNull Function<SELF, C> createNewInstance, @Nullable Consumer<List<T>> saveConsumer, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
+        super(fieldName, tooltipGetter, requiresRestart);
         this.deleteButtonEnabled = deleteButtonEnabled;
         this.insertInFront = insertInFront;
         this.cells = Lists.newArrayList();

@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
@@ -60,11 +61,17 @@ public class BooleanListEntry extends TooltipListEntry<Boolean> {
     public BooleanListEntry(Component fieldName, boolean bool, Component resetButtonKey, Supplier<Boolean> defaultValue, Consumer<Boolean> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier) {
         this(fieldName, bool, resetButtonKey, defaultValue, saveConsumer, tooltipSupplier, false);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public BooleanListEntry(Component fieldName, boolean bool, Component resetButtonKey, Supplier<Boolean> defaultValue, Consumer<Boolean> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, tooltipSupplier, requiresRestart);
+        this(fieldName, bool, resetButtonKey, defaultValue, saveConsumer, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public BooleanListEntry(Component fieldName, boolean bool, Component resetButtonKey, Supplier<Boolean> defaultValue, Consumer<Boolean> saveConsumer, Function<Boolean, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, tooltipGetter, requiresRestart);
         this.defaultValue = defaultValue;
         this.original = bool;
         this.bool = new AtomicBoolean(bool);

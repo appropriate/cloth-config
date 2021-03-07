@@ -51,10 +51,7 @@ public class IntegerListEntry extends TextFieldListEntry<Integer> {
     @ApiStatus.Internal
     @Deprecated
     public IntegerListEntry(Component fieldName, Integer value, Component resetButtonKey, Supplier<Integer> defaultValue, Consumer<Integer> saveConsumer) {
-        super(fieldName, value, resetButtonKey, defaultValue);
-        this.minimum = -Integer.MAX_VALUE;
-        this.maximum = Integer.MAX_VALUE;
-        this.saveConsumer = saveConsumer;
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, null);
     }
     
     @ApiStatus.Internal
@@ -62,11 +59,17 @@ public class IntegerListEntry extends TextFieldListEntry<Integer> {
     public IntegerListEntry(Component fieldName, Integer value, Component resetButtonKey, Supplier<Integer> defaultValue, Consumer<Integer> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier) {
         this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, tooltipSupplier, false);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public IntegerListEntry(Component fieldName, Integer value, Component resetButtonKey, Supplier<Integer> defaultValue, Consumer<Integer> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, value, resetButtonKey, defaultValue, tooltipSupplier, requiresRestart);
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public IntegerListEntry(Component fieldName, Integer value, Component resetButtonKey, Supplier<Integer> defaultValue, Consumer<Integer> saveConsumer, Function<Integer, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, value, resetButtonKey, defaultValue, tooltipGetter, requiresRestart);
         this.minimum = -Integer.MAX_VALUE;
         this.maximum = Integer.MAX_VALUE;
         this.saveConsumer = saveConsumer;

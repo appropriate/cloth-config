@@ -51,10 +51,7 @@ public class DoubleListEntry extends TextFieldListEntry<Double> {
     @ApiStatus.Internal
     @Deprecated
     public DoubleListEntry(Component fieldName, Double value, Component resetButtonKey, Supplier<Double> defaultValue, Consumer<Double> saveConsumer) {
-        super(fieldName, value, resetButtonKey, defaultValue);
-        this.minimum = -Double.MAX_VALUE;
-        this.maximum = Double.MAX_VALUE;
-        this.saveConsumer = saveConsumer;
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, null);
     }
     
     @ApiStatus.Internal
@@ -62,11 +59,17 @@ public class DoubleListEntry extends TextFieldListEntry<Double> {
     public DoubleListEntry(Component fieldName, Double value, Component resetButtonKey, Supplier<Double> defaultValue, Consumer<Double> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier) {
         this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, tooltipSupplier, false);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public DoubleListEntry(Component fieldName, Double value, Component resetButtonKey, Supplier<Double> defaultValue, Consumer<Double> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, value, resetButtonKey, defaultValue, tooltipSupplier, requiresRestart);
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public DoubleListEntry(Component fieldName, Double value, Component resetButtonKey, Supplier<Double> defaultValue, Consumer<Double> saveConsumer, Function<Double, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, value, resetButtonKey, defaultValue, tooltipGetter, requiresRestart);
         this.minimum = -Double.MAX_VALUE;
         this.maximum = Double.MAX_VALUE;
         this.saveConsumer = saveConsumer;

@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 public class BooleanToggleBuilder extends FieldBuilder<Boolean, BooleanListEntry> {
     
     @Nullable private Consumer<Boolean> saveConsumer = null;
-    @NotNull private Function<Boolean, Optional<Component[]>> tooltipSupplier = bool -> Optional.empty();
+    @NotNull private Function<Boolean, Optional<Component[]>> tooltipGetter = bool -> Optional.empty();
     private final boolean value;
     @Nullable private Function<Boolean, Component> yesNoTextSupplier = null;
     
@@ -68,24 +68,30 @@ public class BooleanToggleBuilder extends FieldBuilder<Boolean, BooleanListEntry
         this.defaultValue = () -> defaultValue;
         return this;
     }
-    
-    public BooleanToggleBuilder setTooltipSupplier(@NotNull Function<Boolean, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    @Deprecated
+    public BooleanToggleBuilder setTooltipGetter(@NotNull Function<Boolean, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
+    }
+
+    @Deprecated
+    public BooleanToggleBuilder setTooltipSupplier(@NotNull Function<Boolean, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
     }
     
     public BooleanToggleBuilder setTooltipSupplier(@NotNull Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = bool -> tooltipSupplier.get();
+        this.tooltipGetter = bool -> tooltipSupplier.get();
         return this;
     }
     
     public BooleanToggleBuilder setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = bool -> tooltip;
+        this.tooltipGetter = bool -> tooltip;
         return this;
     }
     
     public BooleanToggleBuilder setTooltip(@Nullable Component... tooltip) {
-        this.tooltipSupplier = bool -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = bool -> Optional.ofNullable(tooltip);
         return this;
     }
     
@@ -102,7 +108,7 @@ public class BooleanToggleBuilder extends FieldBuilder<Boolean, BooleanListEntry
     @NotNull
     @Override
     public BooleanListEntry build() {
-        BooleanListEntry entry = new BooleanListEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, null, isRequireRestart()) {
+        BooleanListEntry entry = new BooleanListEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, tooltipGetter, isRequireRestart()) {
             @Override
             public Component getYesNoText(boolean bool) {
                 if (yesNoTextSupplier == null)
@@ -110,7 +116,6 @@ public class BooleanToggleBuilder extends FieldBuilder<Boolean, BooleanListEntry
                 return yesNoTextSupplier.apply(bool);
             }
         };
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
         if (errorSupplier != null)
             entry.setErrorSupplier(() -> errorSupplier.apply(entry.getValue()));
         return entry;

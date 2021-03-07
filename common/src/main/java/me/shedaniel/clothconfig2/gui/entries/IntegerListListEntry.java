@@ -30,6 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
@@ -48,11 +49,17 @@ public class IntegerListListEntry extends AbstractTextFieldListListEntry<Integer
     public IntegerListListEntry(Component fieldName, List<Integer> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<Integer>> saveConsumer, Supplier<List<Integer>> defaultValue, Component resetButtonKey, boolean requiresRestart) {
         this(fieldName, value, defaultExpanded, tooltipSupplier, saveConsumer, defaultValue, resetButtonKey, requiresRestart, true, true);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public IntegerListListEntry(Component fieldName, List<Integer> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<Integer>> saveConsumer, Supplier<List<Integer>> defaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
-        super(fieldName, value, defaultExpanded, tooltipSupplier, saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, IntegerListCell::new);
+        this(fieldName, value, defaultExpanded, supplierAsFunction(tooltipSupplier), saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public IntegerListListEntry(Component fieldName, List<Integer> value, boolean defaultExpanded, Function<List<Integer>, Optional<Component[]>> tooltipGetter, Consumer<List<Integer>> saveConsumer, Supplier<List<Integer>> defaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
+        super(fieldName, value, defaultExpanded, tooltipGetter, saveConsumer, defaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, IntegerListCell::new);
         this.minimum = Integer.MIN_VALUE;
         this.maximum = Integer.MAX_VALUE;
     }

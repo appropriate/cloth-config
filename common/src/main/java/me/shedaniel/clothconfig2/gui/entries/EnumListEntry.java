@@ -50,13 +50,19 @@ public class EnumListEntry<T extends Enum<?>> extends SelectionListEntry<T> {
     @ApiStatus.Internal
     @Deprecated
     public EnumListEntry(Component fieldName, Class<T> clazz, T value, Component resetButtonKey, Supplier<T> defaultValue, Consumer<T> saveConsumer, Function<Enum, Component> enumNameProvider, Supplier<Optional<Component[]>> tooltipSupplier) {
-        super(fieldName, clazz.getEnumConstants(), value, resetButtonKey, defaultValue, saveConsumer, enumNameProvider::apply, tooltipSupplier, false);
+        this(fieldName, clazz, value, resetButtonKey, defaultValue, saveConsumer, enumNameProvider, tooltipSupplier, false);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public EnumListEntry(Component fieldName, Class<T> clazz, T value, Component resetButtonKey, Supplier<T> defaultValue, Consumer<T> saveConsumer, Function<Enum, Component> enumNameProvider, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, clazz.getEnumConstants(), value, resetButtonKey, defaultValue, saveConsumer, enumNameProvider::apply, tooltipSupplier, requiresRestart);
+        this(fieldName, clazz, value, resetButtonKey, defaultValue, saveConsumer, enumNameProvider, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public EnumListEntry(Component fieldName, Class<T> clazz, T value, Component resetButtonKey, Supplier<T> defaultValue, Consumer<T> saveConsumer, Function<Enum, Component> enumNameProvider, Function<T, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, clazz.getEnumConstants(), value, resetButtonKey, defaultValue, saveConsumer, enumNameProvider::apply, tooltipGetter, requiresRestart);
     }
     
 }

@@ -26,6 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
@@ -36,8 +37,7 @@ public class StringListEntry extends TextFieldListEntry<String> {
     @ApiStatus.Internal
     @Deprecated
     public StringListEntry(Component fieldName, String value, Component resetButtonKey, Supplier<String> defaultValue, Consumer<String> saveConsumer) {
-        super(fieldName, value, resetButtonKey, defaultValue);
-        this.saveConsumer = saveConsumer;
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, null);
     }
     
     @ApiStatus.Internal
@@ -45,11 +45,17 @@ public class StringListEntry extends TextFieldListEntry<String> {
     public StringListEntry(Component fieldName, String value, Component resetButtonKey, Supplier<String> defaultValue, Consumer<String> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier) {
         this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, tooltipSupplier, false);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public StringListEntry(Component fieldName, String value, Component resetButtonKey, Supplier<String> defaultValue, Consumer<String> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, value, resetButtonKey, defaultValue, tooltipSupplier, requiresRestart);
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public StringListEntry(Component fieldName, String value, Component resetButtonKey, Supplier<String> defaultValue, Consumer<String> saveConsumer, Function<String, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, value, resetButtonKey, defaultValue, tooltipGetter, requiresRestart);
         this.saveConsumer = saveConsumer;
     }
     

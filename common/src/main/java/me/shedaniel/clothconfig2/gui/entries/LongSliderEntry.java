@@ -27,6 +27,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -53,7 +54,13 @@ public class LongSliderEntry extends AbstractSliderEntry<Long, LongSliderEntry> 
     @ApiStatus.Internal
     @Deprecated
     public LongSliderEntry(Component fieldName, long minimum, long maximum, long value, Consumer<Long> saveConsumer, Component resetButtonKey, Supplier<Long> defaultValue, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, minimum, maximum, value, resetButtonKey, defaultValue, saveConsumer, tooltipSupplier, requiresRestart);
+        this(fieldName, minimum, maximum, value, saveConsumer, resetButtonKey, defaultValue, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public LongSliderEntry(Component fieldName, long minimum, long maximum, long value, Consumer<Long> saveConsumer, Component resetButtonKey, Supplier<Long> defaultValue, Function<Long, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, minimum, maximum, value, resetButtonKey, defaultValue, saveConsumer, tooltipGetter, requiresRestart);
 
         this.value = new AtomicLong(value);
         syncValueToSlider();

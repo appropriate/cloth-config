@@ -142,7 +142,7 @@ public class ClothConfigDemo {
                 new TextComponent("Nice"),
                 Lists.newArrayList(new Pair<>(10, 10), new Pair<>(20, 40)),
                 false,
-                Optional::empty,
+                value -> Optional.empty(),
                 list -> {},
                 () -> Lists.newArrayList(new Pair<>(10, 10), new Pair<>(20, 40)),
                 entryBuilder.getResetButtonKey(),

@@ -65,8 +65,8 @@ public abstract class AbstractSliderEntry<T, SELF extends AbstractSliderEntry<T,
     private final List<GuiEventListener> widgets;
 
     @ApiStatus.Internal
-    public AbstractSliderEntry(Component fieldName, T minimum, T maximum, T value, Component resetButtonKey, Supplier<T> defaultValue, Consumer<T> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, tooltipSupplier, requiresRestart);
+    public AbstractSliderEntry(Component fieldName, T minimum, T maximum, T value, Component resetButtonKey, Supplier<T> defaultValue, Consumer<T> saveConsumer, Function<T, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, tooltipGetter, requiresRestart);
         this.original = value;
         this.defaultValue = defaultValue;
         this.saveConsumer = saveConsumer;
@@ -93,11 +93,7 @@ public abstract class AbstractSliderEntry<T, SELF extends AbstractSliderEntry<T,
     }
 
     protected Component getValueForMessage() {
-        if (textGetter == null) {
-            return null;
-        } else {
-            return textGetter.apply(getValue());
-        }
+        return textGetter == null ? null : textGetter.apply(getValue());
     }
 
     @Override

@@ -51,22 +51,25 @@ public class FloatListEntry extends TextFieldListEntry<Float> {
     @ApiStatus.Internal
     @Deprecated
     public FloatListEntry(Component fieldName, Float value, Component resetButtonKey, Supplier<Float> defaultValue, Consumer<Float> saveConsumer) {
-        super(fieldName, value, resetButtonKey, defaultValue);
-        this.minimum = -Float.MAX_VALUE;
-        this.maximum = Float.MAX_VALUE;
-        this.saveConsumer = saveConsumer;
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, null);
     }
     
     @ApiStatus.Internal
     @Deprecated
-    public FloatListEntry(Component fieldName, Float value, Component resetButtonKey, Supplier<Float> defaultValue, Consumer<Float> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier) {
-        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, tooltipSupplier, false);
+    public FloatListEntry(Component fieldName, Float value, Component resetButtonKey, Supplier<Float> defaultValue, Consumer<Float> saveConsumer, Function<Float, Optional<Component[]>> tooltipGetter) {
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, tooltipGetter, false);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public FloatListEntry(Component fieldName, Float value, Component resetButtonKey, Supplier<Float> defaultValue, Consumer<Float> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, value, resetButtonKey, defaultValue, tooltipSupplier, requiresRestart);
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public FloatListEntry(Component fieldName, Float value, Component resetButtonKey, Supplier<Float> defaultValue, Consumer<Float> saveConsumer, Function<Float, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, value, resetButtonKey, defaultValue, tooltipGetter, requiresRestart);
         this.minimum = -Float.MAX_VALUE;
         this.maximum = Float.MAX_VALUE;
         this.saveConsumer = saveConsumer;

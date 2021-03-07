@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 public class DoubleFieldBuilder extends FieldBuilder<Double, DoubleListEntry> {
     
     private Consumer<Double> saveConsumer = null;
-    private Function<Double, Optional<Component[]>> tooltipSupplier = d -> Optional.empty();
+    private Function<Double, Optional<Component[]>> tooltipGetter = d -> Optional.empty();
     private final double value;
     private Double min = null, max = null;
     
@@ -88,35 +88,39 @@ public class DoubleFieldBuilder extends FieldBuilder<Double, DoubleListEntry> {
         return this;
     }
     
-    public DoubleFieldBuilder setTooltipSupplier(Function<Double, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+    public DoubleFieldBuilder setTooltipGetter(Function<Double, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
     }
-    
+
+    @Deprecated
+    public DoubleFieldBuilder setTooltipSupplier(Function<Double, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
+    }
+
     public DoubleFieldBuilder setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = d -> tooltipSupplier.get();
+        this.tooltipGetter = d -> tooltipSupplier.get();
         return this;
     }
     
     public DoubleFieldBuilder setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = d -> tooltip;
+        this.tooltipGetter = d -> tooltip;
         return this;
     }
     
     public DoubleFieldBuilder setTooltip(Component... tooltip) {
-        this.tooltipSupplier = d -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = d -> Optional.ofNullable(tooltip);
         return this;
     }
     
     @NotNull
     @Override
     public DoubleListEntry build() {
-        DoubleListEntry entry = new DoubleListEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, null, isRequireRestart());
+        DoubleListEntry entry = new DoubleListEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, tooltipGetter, isRequireRestart());
         if (min != null)
             entry.setMinimum(min);
         if (max != null)
             entry.setMaximum(max);
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
         if (errorSupplier != null)
             entry.setErrorSupplier(() -> errorSupplier.apply(entry.getValue()));
         return entry;

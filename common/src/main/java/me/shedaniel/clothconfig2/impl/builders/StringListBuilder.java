@@ -38,7 +38,7 @@ public class StringListBuilder extends FieldBuilder<List<String>, StringListList
     
     private Function<String, Optional<Component>> cellErrorSupplier;
     private Consumer<List<String>> saveConsumer = null;
-    private Function<List<String>, Optional<Component[]>> tooltipSupplier = list -> Optional.empty();
+    private Function<List<String>, Optional<Component[]>> tooltipGetter = list -> Optional.empty();
     private final List<String> value;
     private boolean expanded = false;
     private Function<StringListListEntry, StringListListEntry.StringListCell> createNewInstance;
@@ -121,33 +121,37 @@ public class StringListBuilder extends FieldBuilder<List<String>, StringListList
     }
     
     public StringListBuilder setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = list -> tooltipSupplier.get();
+        this.tooltipGetter = list -> tooltipSupplier.get();
         return this;
     }
-    
-    public StringListBuilder setTooltipSupplier(Function<List<String>, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    public StringListBuilder setTooltipGetter(Function<List<String>, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
+    }
+
+    @Deprecated
+    public StringListBuilder setTooltipSupplier(Function<List<String>, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
     }
     
     public StringListBuilder setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = list -> tooltip;
+        this.tooltipGetter = list -> tooltip;
         return this;
     }
     
     public StringListBuilder setTooltip(Component... tooltip) {
-        this.tooltipSupplier = list -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = list -> Optional.ofNullable(tooltip);
         return this;
     }
     
     @NotNull
     @Override
     public StringListListEntry build() {
-        StringListListEntry entry = new StringListListEntry(getFieldNameKey(), value, expanded, null, saveConsumer, defaultValue, getResetButtonKey(), isRequireRestart(), deleteButtonEnabled, insertInFront);
+        StringListListEntry entry = new StringListListEntry(getFieldNameKey(), value, expanded, tooltipGetter, saveConsumer, defaultValue, getResetButtonKey(), isRequireRestart(), deleteButtonEnabled, insertInFront);
         if (createNewInstance != null)
             entry.setCreateNewInstance(createNewInstance);
         entry.setCellErrorSupplier(cellErrorSupplier);
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
         entry.setAddTooltip(addTooltip);
         entry.setRemoveTooltip(removeTooltip);
         if (errorSupplier != null)

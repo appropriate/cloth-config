@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 public class IntSliderBuilder extends FieldBuilder<Integer, IntegerSliderEntry> {
     
     private Consumer<Integer> saveConsumer = null;
-    private Function<Integer, Optional<Component[]>> tooltipSupplier = i -> Optional.empty();
+    private Function<Integer, Optional<Component[]>> tooltipGetter = i -> Optional.empty();
     private final int value;
     private int max;
     private int min;
@@ -76,24 +76,29 @@ public class IntSliderBuilder extends FieldBuilder<Integer, IntegerSliderEntry> 
         this.defaultValue = () -> defaultValue;
         return this;
     }
-    
-    public IntSliderBuilder setTooltipSupplier(Function<Integer, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    public IntSliderBuilder setTooltipGetter(Function<Integer, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
+    }
+
+    @Deprecated
+    public IntSliderBuilder setTooltipSupplier(Function<Integer, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
     }
     
     public IntSliderBuilder setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = i -> tooltipSupplier.get();
+        this.tooltipGetter = i -> tooltipSupplier.get();
         return this;
     }
     
     public IntSliderBuilder setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = i -> tooltip;
+        this.tooltipGetter = i -> tooltip;
         return this;
     }
     
     public IntSliderBuilder setTooltip(Component... tooltip) {
-        this.tooltipSupplier = i -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = i -> Optional.ofNullable(tooltip);
         return this;
     }
     
@@ -110,10 +115,9 @@ public class IntSliderBuilder extends FieldBuilder<Integer, IntegerSliderEntry> 
     @NotNull
     @Override
     public IntegerSliderEntry build() {
-        IntegerSliderEntry entry = new IntegerSliderEntry(getFieldNameKey(), min, max, value, getResetButtonKey(), defaultValue, saveConsumer, null, isRequireRestart());
+        IntegerSliderEntry entry = new IntegerSliderEntry(getFieldNameKey(), min, max, value, getResetButtonKey(), defaultValue, saveConsumer, tooltipGetter, isRequireRestart());
         if (textGetter != null)
             entry.setTextGetter(textGetter);
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
         if (errorSupplier != null)
             entry.setErrorSupplier(() -> errorSupplier.apply(entry.getValue()));
         return entry;

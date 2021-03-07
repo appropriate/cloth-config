@@ -36,7 +36,7 @@ import java.util.function.Supplier;
 public class SubCategoryBuilder extends FieldBuilder<Object, SubCategoryListEntry> implements List<AbstractConfigListEntry> {
     
     private final List<AbstractConfigListEntry> entries;
-    private Function<List<AbstractConfigListEntry>, Optional<Component[]>> tooltipSupplier = list -> Optional.empty();
+    private Function<List<AbstractConfigListEntry>, Optional<Component[]>> tooltipGetter = list -> Optional.empty();
     private boolean expanded = false;
     
     public SubCategoryBuilder(Component resetButtonKey, Component fieldNameKey) {
@@ -50,22 +50,27 @@ public class SubCategoryBuilder extends FieldBuilder<Object, SubCategoryListEntr
     }
     
     public SubCategoryBuilder setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = list -> tooltipSupplier.get();
+        this.tooltipGetter = list -> tooltipSupplier.get();
         return this;
     }
-    
-    public SubCategoryBuilder setTooltipSupplier(Function<List<AbstractConfigListEntry>, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    public SubCategoryBuilder setTooltipGetter(Function<List<AbstractConfigListEntry>, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
+    }
+
+    @Deprecated
+    public SubCategoryBuilder setTooltipSupplier(Function<List<AbstractConfigListEntry>, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
     }
     
     public SubCategoryBuilder setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = list -> tooltip;
+        this.tooltipGetter = list -> tooltip;
         return this;
     }
     
     public SubCategoryBuilder setTooltip(Component... tooltip) {
-        this.tooltipSupplier = list -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = list -> Optional.ofNullable(tooltip);
         return this;
     }
     
@@ -83,9 +88,7 @@ public class SubCategoryBuilder extends FieldBuilder<Object, SubCategoryListEntr
     @NotNull
     @Override
     public SubCategoryListEntry build() {
-        SubCategoryListEntry entry = new SubCategoryListEntry(getFieldNameKey(), entries, expanded);
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
-        return entry;
+        return new SubCategoryListEntry(getFieldNameKey(), entries, expanded, tooltipGetter);
     }
     
     @Override

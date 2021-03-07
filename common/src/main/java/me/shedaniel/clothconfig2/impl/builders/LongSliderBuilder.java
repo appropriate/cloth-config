@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 public class LongSliderBuilder extends FieldBuilder<Long, LongSliderEntry> {
     
     private Consumer<Long> saveConsumer = null;
-    private Function<Long, Optional<Component[]>> tooltipSupplier = l -> Optional.empty();
+    private Function<Long, Optional<Component[]>> tooltipGetter = l -> Optional.empty();
     private final long value;
     private final long max;
     private final long min;
@@ -76,24 +76,29 @@ public class LongSliderBuilder extends FieldBuilder<Long, LongSliderEntry> {
         this.defaultValue = () -> defaultValue;
         return this;
     }
-    
-    public LongSliderBuilder setTooltipSupplier(Function<Long, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    public LongSliderBuilder setTooltipGetter(Function<Long, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
+    }
+
+    @Deprecated
+    public LongSliderBuilder setTooltipSupplier(Function<Long, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
     }
     
     public LongSliderBuilder setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = i -> tooltipSupplier.get();
+        this.tooltipGetter = i -> tooltipSupplier.get();
         return this;
     }
     
     public LongSliderBuilder setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = i -> tooltip;
+        this.tooltipGetter = i -> tooltip;
         return this;
     }
     
     public LongSliderBuilder setTooltip(Component... tooltip) {
-        this.tooltipSupplier = i -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = i -> Optional.ofNullable(tooltip);
         return this;
     }
     
@@ -101,10 +106,9 @@ public class LongSliderBuilder extends FieldBuilder<Long, LongSliderEntry> {
     @NotNull
     @Override
     public LongSliderEntry build() {
-        LongSliderEntry entry = new LongSliderEntry(getFieldNameKey(), min, max, value, saveConsumer, getResetButtonKey(), defaultValue, null, isRequireRestart());
+        LongSliderEntry entry = new LongSliderEntry(getFieldNameKey(), min, max, value, saveConsumer, getResetButtonKey(), defaultValue, tooltipGetter, isRequireRestart());
         if (textGetter != null)
             entry.setTextGetter(textGetter);
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
         if (errorSupplier != null)
             entry.setErrorSupplier(() -> errorSupplier.apply(entry.getValue()));
         return entry;

@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 public class IntFieldBuilder extends FieldBuilder<Integer, IntegerListEntry> {
     
     private Consumer<Integer> saveConsumer = null;
-    private Function<Integer, Optional<Component[]>> tooltipSupplier = i -> Optional.empty();
+    private Function<Integer, Optional<Component[]>> tooltipGetter = i -> Optional.empty();
     private final int value;
     private Integer min = null, max = null;
     
@@ -67,24 +67,30 @@ public class IntFieldBuilder extends FieldBuilder<Integer, IntegerListEntry> {
         this.defaultValue = () -> defaultValue;
         return this;
     }
-    
-    public IntFieldBuilder setTooltipSupplier(Function<Integer, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    public IntFieldBuilder setTooltipGetter(Function<Integer, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
+        return this;
+    }
+
+    @Deprecated
+    public IntFieldBuilder setTooltipSupplier(Function<Integer, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
     }
     
     public IntFieldBuilder setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = i -> tooltipSupplier.get();
+        this.tooltipGetter = i -> tooltipSupplier.get();
         return this;
     }
     
     public IntFieldBuilder setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = i -> tooltip;
+        this.tooltipGetter = i -> tooltip;
         return this;
     }
     
     public IntFieldBuilder setTooltip(Component... tooltip) {
-        this.tooltipSupplier = i -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = i -> Optional.ofNullable(tooltip);
         return this;
     }
     
@@ -111,12 +117,11 @@ public class IntFieldBuilder extends FieldBuilder<Integer, IntegerListEntry> {
     @NotNull
     @Override
     public IntegerListEntry build() {
-        IntegerListEntry entry = new IntegerListEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, null, isRequireRestart());
+        IntegerListEntry entry = new IntegerListEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, tooltipGetter, isRequireRestart());
         if (min != null)
             entry.setMinimum(min);
         if (max != null)
             entry.setMaximum(max);
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
         if (errorSupplier != null)
             entry.setErrorSupplier(() -> errorSupplier.apply(entry.getValue()));
         return entry;

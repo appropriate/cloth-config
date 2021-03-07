@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class ColorEntry extends TextFieldListEntry<Integer> {
@@ -39,11 +40,17 @@ public class ColorEntry extends TextFieldListEntry<Integer> {
     private final ColorDisplayWidget colorDisplayWidget;
     private final Consumer<Integer> saveConsumer;
     private boolean alpha;
-    
+
     @ApiStatus.Internal
     @Deprecated
     public ColorEntry(Component fieldName, int value, Component resetButtonKey, Supplier<Integer> defaultValue, Consumer<Integer> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, 0, resetButtonKey, defaultValue, tooltipSupplier, requiresRestart);
+        this(fieldName, value, resetButtonKey, defaultValue, saveConsumer, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public ColorEntry(Component fieldName, int value, Component resetButtonKey, Supplier<Integer> defaultValue, Consumer<Integer> saveConsumer, Function<Integer, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, 0, resetButtonKey, defaultValue, tooltipGetter, requiresRestart);
         this.alpha = true;
         ColorValue colorValue = getColorValue(String.valueOf(value));
         if (colorValue.hasError())

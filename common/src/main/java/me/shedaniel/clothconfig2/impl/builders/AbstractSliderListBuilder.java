@@ -24,7 +24,7 @@ public abstract class AbstractSliderListBuilder<T, C extends AbstractSliderListE
     private boolean deleteButtonEnabled = true, insertInFront = true;
     private Function<E, C> createNewInstance;
     private Function<T, Optional<Component>> cellErrorSupplier;
-    private Function<List<T>, Optional<Component[]>> tooltipSupplier = list -> Optional.empty();
+    private Function<List<T>, Optional<Component[]>> tooltipGetter = list -> Optional.empty();
     private Component addTooltip = new TranslatableComponent("text.cloth-config.list.add"), removeTooltip = new TranslatableComponent("text.cloth-config.list.remove");
 
     public AbstractSliderListBuilder(Component resetButtonKey, Component fieldNameKey, List<T> value, T min, T max) {
@@ -105,22 +105,22 @@ public abstract class AbstractSliderListBuilder<T, C extends AbstractSliderListE
     }
 
     public AbstractSliderListBuilder<T, C, E, SELF> setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = list -> tooltipSupplier.get();
+        this.tooltipGetter = list -> tooltipSupplier.get();
         return this;
     }
 
-    public AbstractSliderListBuilder<T, C, E, SELF> setTooltipSupplier(Function<List<T>, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+    public AbstractSliderListBuilder<T, C, E, SELF> setTooltipGetter(Function<List<T>, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
     }
 
     public AbstractSliderListBuilder<T, C, E, SELF> setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = list -> tooltip;
+        this.tooltipGetter = list -> tooltip;
         return this;
     }
 
     public AbstractSliderListBuilder<T, C, E, SELF> setTooltip(Component... tooltip) {
-        this.tooltipSupplier = list -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = list -> Optional.ofNullable(tooltip);
         return this;
     }
 
@@ -134,17 +134,16 @@ public abstract class AbstractSliderListBuilder<T, C extends AbstractSliderListE
         return this;
     }
 
-    protected abstract E buildEntry(Component fieldNameKey, T min, T max, List<T> value, boolean expanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<T>> saveConsumer, Supplier<List<T>> defaultValue, T cellDefaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront);
+    protected abstract E buildEntry(Component fieldNameKey, T min, T max, List<T> value, boolean expanded, Function<List<T>, Optional<Component[]>> tooltipGetter, Consumer<List<T>> saveConsumer, Supplier<List<T>> defaultValue, T cellDefaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront);
 
     @Override
     public E build() {
-        E entry = buildEntry(getFieldNameKey(), min, max, value, expanded, null, saveConsumer, defaultValue, cellDefaultValue == null ? min : cellDefaultValue, getResetButtonKey(), isRequireRestart(), deleteButtonEnabled, insertInFront);
+        E entry = buildEntry(getFieldNameKey(), min, max, value, expanded, tooltipGetter, saveConsumer, defaultValue, cellDefaultValue == null ? min : cellDefaultValue, getResetButtonKey(), isRequireRestart(), deleteButtonEnabled, insertInFront);
         if (textGetter != null)
             entry.setTextGetter(textGetter);
         if (createNewInstance != null)
             entry.setCreateNewInstance(createNewInstance);
         entry.setCellErrorSupplier(cellErrorSupplier);
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
         entry.setAddTooltip(addTooltip);
         entry.setRemoveTooltip(removeTooltip);
         if (errorSupplier != null)

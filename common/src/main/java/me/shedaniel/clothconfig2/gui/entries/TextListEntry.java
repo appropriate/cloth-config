@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
@@ -58,13 +59,19 @@ public class TextListEntry extends TooltipListEntry<Object> {
     @ApiStatus.Internal
     @Deprecated
     public TextListEntry(Component fieldName, Component text, int color) {
-        this(fieldName, text, color, null);
+        this(fieldName, text, color, (Function<Object, Optional<Component[]>>)null);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public TextListEntry(Component fieldName, Component text, int color, Supplier<Optional<Component[]>> tooltipSupplier) {
-        super(fieldName, tooltipSupplier);
+        this(fieldName, text, color, supplierAsFunction(tooltipSupplier));
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public TextListEntry(Component fieldName, Component text, int color, Function<Object, Optional<Component[]>> tooltipGetter) {
+        super(fieldName, tooltipGetter);
         this.text = text;
         this.color = color;
         this.wrappedLines = Collections.emptyList();

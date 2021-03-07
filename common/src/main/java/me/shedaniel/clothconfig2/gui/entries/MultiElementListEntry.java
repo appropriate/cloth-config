@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Environment(EnvType.CLIENT)
@@ -55,7 +56,7 @@ public class MultiElementListEntry<T> extends TooltipListEntry<T> implements Exp
     
     @ApiStatus.Internal
     public MultiElementListEntry(Component categoryName, T object, List<AbstractConfigListEntry<?>> entries, boolean defaultExpanded) {
-        super(categoryName, null);
+        super(categoryName, (Function<T, Optional<Component[]>>)null);
         this.object = object;
         this.entries = entries;
         this.expanded = defaultExpanded;

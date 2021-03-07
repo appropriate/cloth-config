@@ -72,11 +72,17 @@ public class SelectionListEntry<T> extends TooltipListEntry<T> {
     public SelectionListEntry(Component fieldName, T[] valuesArray, T value, Component resetButtonKey, Supplier<T> defaultValue, Consumer<T> saveConsumer, Function<T, Component> nameProvider, Supplier<Optional<Component[]>> tooltipSupplier) {
         this(fieldName, valuesArray, value, resetButtonKey, defaultValue, saveConsumer, nameProvider, tooltipSupplier, false);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public SelectionListEntry(Component fieldName, T[] valuesArray, T value, Component resetButtonKey, Supplier<T> defaultValue, Consumer<T> saveConsumer, Function<T, Component> nameProvider, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, tooltipSupplier, requiresRestart);
+        this(fieldName, valuesArray, value, resetButtonKey, defaultValue, saveConsumer, nameProvider, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public SelectionListEntry(Component fieldName, T[] valuesArray, T value, Component resetButtonKey, Supplier<T> defaultValue, Consumer<T> saveConsumer, Function<T, Component> nameProvider, Function<T, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, tooltipGetter, requiresRestart);
         if (valuesArray != null)
             this.values = ImmutableList.copyOf(valuesArray);
         else

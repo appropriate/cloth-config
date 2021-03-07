@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 public class EnumSelectorBuilder<T extends Enum<?>> extends FieldBuilder<T, EnumListEntry<T>> {
     
     private Consumer<T> saveConsumer = null;
-    private Function<T, Optional<Component[]>> tooltipSupplier = e -> Optional.empty();
+    private Function<T, Optional<Component[]>> tooltipGetter = e -> Optional.empty();
     private final T value;
     private final Class<T> clazz;
     private Function<Enum, Component> enumNameProvider = EnumListEntry.DEFAULT_NAME_PROVIDER;
@@ -73,24 +73,29 @@ public class EnumSelectorBuilder<T extends Enum<?>> extends FieldBuilder<T, Enum
         this.defaultValue = () -> defaultValue;
         return this;
     }
-    
-    public EnumSelectorBuilder<T> setTooltipSupplier(Function<T, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    public EnumSelectorBuilder<T> setTooltipGetter(Function<T, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
+    }
+
+    @Deprecated
+    public EnumSelectorBuilder<T> setTooltipSupplier(Function<T, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
     }
     
     public EnumSelectorBuilder<T> setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = e -> tooltipSupplier.get();
+        this.tooltipGetter = e -> tooltipSupplier.get();
         return this;
     }
     
     public EnumSelectorBuilder<T> setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = e -> tooltip;
+        this.tooltipGetter = e -> tooltip;
         return this;
     }
     
     public EnumSelectorBuilder<T> setTooltip(Component... tooltip) {
-        this.tooltipSupplier = e -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = e -> Optional.ofNullable(tooltip);
         return this;
     }
     
@@ -103,8 +108,7 @@ public class EnumSelectorBuilder<T extends Enum<?>> extends FieldBuilder<T, Enum
     @NotNull
     @Override
     public EnumListEntry<T> build() {
-        EnumListEntry<T> entry = new EnumListEntry<>(getFieldNameKey(), clazz, value, getResetButtonKey(), defaultValue, saveConsumer, enumNameProvider, null, isRequireRestart());
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
+        EnumListEntry<T> entry = new EnumListEntry<>(getFieldNameKey(), clazz, value, getResetButtonKey(), defaultValue, saveConsumer, enumNameProvider, tooltipGetter, isRequireRestart());
         if (errorSupplier != null)
             entry.setErrorSupplier(() -> errorSupplier.apply(entry.getValue()));
         return entry;

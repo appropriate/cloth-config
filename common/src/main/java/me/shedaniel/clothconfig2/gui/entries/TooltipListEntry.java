@@ -33,23 +33,40 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public abstract class TooltipListEntry<T> extends AbstractConfigListEntry<T> {
-    @Nullable private Supplier<Optional<Component[]>> tooltipSupplier;
+    @Nullable private Function<T, Optional<Component[]>> tooltipGetter;
+
+    public static <V, U> Function<V, U> supplierAsFunction(Supplier<U> supplier) {
+        return supplier == null ? null : v -> supplier.get();
+    }
     
     @ApiStatus.Internal
     @Deprecated
     public TooltipListEntry(Component fieldName, @Nullable Supplier<Optional<Component[]>> tooltipSupplier) {
         this(fieldName, tooltipSupplier, false);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public TooltipListEntry(Component fieldName, @Nullable Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
+        this(fieldName, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public TooltipListEntry(Component fieldName, @Nullable Function<T, Optional<Component[]>> tooltipGetter) {
+        this(fieldName, tooltipGetter, false);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public TooltipListEntry(Component fieldName, @Nullable Function<T, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
         super(fieldName, requiresRestart);
-        this.tooltipSupplier = tooltipSupplier;
+        this.tooltipGetter = tooltipGetter;
     }
     
     @Override
@@ -68,22 +85,30 @@ public abstract class TooltipListEntry<T> extends AbstractConfigListEntry<T> {
     }
     
     public Optional<Component[]> getTooltip() {
-        if (tooltipSupplier != null)
-            return tooltipSupplier.get();
+        if (tooltipGetter != null)
+            return tooltipGetter.apply(getValue());
         return Optional.empty();
     }
     
     public Optional<Component[]> getTooltip(int mouseX, int mouseY) {
         return getTooltip();
     }
+
+    @Nullable
+    public Function<T, Optional<Component[]>> getTooltipGetter() {
+        return tooltipGetter;
+    }
     
     @Nullable
+    @Deprecated
     public Supplier<Optional<Component[]>> getTooltipSupplier() {
-        return tooltipSupplier;
+        return tooltipGetter == null ? null : () -> {
+            return tooltipGetter.apply(getValue());
+        };
     }
-    
+
+    @Deprecated
     public void setTooltipSupplier(@Nullable Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+        this.tooltipGetter = supplierAsFunction(tooltipSupplier);
     }
-    
 }

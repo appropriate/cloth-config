@@ -34,6 +34,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
@@ -57,11 +58,17 @@ public abstract class TextFieldListEntry<T> extends TooltipListEntry<T> {
     protected TextFieldListEntry(Component fieldName, T original, Component resetButtonKey, Supplier<T> defaultValue, Supplier<Optional<Component[]>> tooltipSupplier) {
         this(fieldName, original, resetButtonKey, defaultValue, tooltipSupplier, false);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     protected TextFieldListEntry(Component fieldName, T original, Component resetButtonKey, Supplier<T> defaultValue, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, tooltipSupplier, requiresRestart);
+        this(fieldName, original, resetButtonKey, defaultValue, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    protected TextFieldListEntry(Component fieldName, T original, Component resetButtonKey, Supplier<T> defaultValue, Function<T, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, tooltipGetter, requiresRestart);
         this.defaultValue = defaultValue;
         this.original = original;
         this.textFieldWidget = new EditBox(Minecraft.getInstance().font, 0, 0, 148, 18, NarratorChatListener.NO_TITLE) {

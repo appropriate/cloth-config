@@ -8,6 +8,7 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
@@ -17,7 +18,7 @@ public class LongSliderListBuilder extends AbstractSliderListBuilder<Long, LongS
     }
 
     @Override
-    protected LongSliderListEntry buildEntry(Component fieldNameKey, Long min, Long max, List<Long> value, boolean expanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<Long>> saveConsumer, Supplier<List<Long>> defaultValue, Long cellDefaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
-        return new LongSliderListEntry(fieldNameKey, min, max, value, expanded, tooltipSupplier, saveConsumer, defaultValue, cellDefaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront);
+    protected LongSliderListEntry buildEntry(Component fieldNameKey, Long min, Long max, List<Long> value, boolean expanded, Function<List<Long>, Optional<Component[]>> tooltipGetter, Consumer<List<Long>> saveConsumer, Supplier<List<Long>> defaultValue, Long cellDefaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
+        return new LongSliderListEntry(fieldNameKey, min, max, value, expanded, tooltipGetter, saveConsumer, defaultValue, cellDefaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront);
     }
 }

@@ -27,6 +27,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -49,11 +50,17 @@ public class IntegerSliderEntry extends AbstractSliderEntry<Integer, IntegerSlid
     public IntegerSliderEntry(Component fieldName, int minimum, int maximum, int value, Component resetButtonKey, Supplier<Integer> defaultValue, Consumer<Integer> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier) {
         this(fieldName, minimum, maximum, value, resetButtonKey, defaultValue, saveConsumer, tooltipSupplier, false);
     }
-    
+
     @ApiStatus.Internal
     @Deprecated
     public IntegerSliderEntry(Component fieldName, int minimum, int maximum, int value, Component resetButtonKey, Supplier<Integer> defaultValue, Consumer<Integer> saveConsumer, Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart) {
-        super(fieldName, minimum, maximum, value, resetButtonKey, defaultValue, saveConsumer, tooltipSupplier, requiresRestart);
+        this(fieldName, minimum, maximum, value, resetButtonKey, defaultValue, saveConsumer, supplierAsFunction(tooltipSupplier), requiresRestart);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public IntegerSliderEntry(Component fieldName, int minimum, int maximum, int value, Component resetButtonKey, Supplier<Integer> defaultValue, Consumer<Integer> saveConsumer, Function<Integer, Optional<Component[]>> tooltipGetter, boolean requiresRestart) {
+        super(fieldName, minimum, maximum, value, resetButtonKey, defaultValue, saveConsumer, tooltipGetter, requiresRestart);
 
         this.value = new AtomicInteger(value);
         syncValueToSlider();

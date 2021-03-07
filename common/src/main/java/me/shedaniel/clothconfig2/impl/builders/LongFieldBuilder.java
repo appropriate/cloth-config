@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 public class LongFieldBuilder extends FieldBuilder<Long, LongListEntry> {
     
     private Consumer<Long> saveConsumer = null;
-    private Function<Long, Optional<Component[]>> tooltipSupplier = l -> Optional.empty();
+    private Function<Long, Optional<Component[]>> tooltipGetter = l -> Optional.empty();
     private final long value;
     private Long min = null, max = null;
     
@@ -69,22 +69,27 @@ public class LongFieldBuilder extends FieldBuilder<Long, LongListEntry> {
     }
     
     public LongFieldBuilder setTooltipSupplier(Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = l -> tooltipSupplier.get();
+        this.tooltipGetter = l -> tooltipSupplier.get();
         return this;
     }
-    
-    public LongFieldBuilder setTooltipSupplier(Function<Long, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    public LongFieldBuilder setTooltipGetter(Function<Long, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
+    }
+
+    @Deprecated
+    public LongFieldBuilder setTooltipSupplier(Function<Long, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
     }
     
     public LongFieldBuilder setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = l -> tooltip;
+        this.tooltipGetter = l -> tooltip;
         return this;
     }
     
     public LongFieldBuilder setTooltip(Component... tooltip) {
-        this.tooltipSupplier = l -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = l -> Optional.ofNullable(tooltip);
         return this;
     }
     
@@ -111,12 +116,11 @@ public class LongFieldBuilder extends FieldBuilder<Long, LongListEntry> {
     @NotNull
     @Override
     public LongListEntry build() {
-        LongListEntry entry = new LongListEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, null, isRequireRestart());
+        LongListEntry entry = new LongListEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, tooltipGetter, isRequireRestart());
         if (min != null)
             entry.setMinimum(min);
         if (max != null)
             entry.setMaximum(max);
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
         if (errorSupplier != null)
             entry.setErrorSupplier(() -> errorSupplier.apply(entry.getValue()));
         return entry;

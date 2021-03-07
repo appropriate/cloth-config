@@ -21,8 +21,8 @@ import java.util.function.Supplier;
 public class LongSliderListEntry extends AbstractSliderListEntry<Long, LongSliderListEntry.LongSliderListCell, LongSliderListEntry> {
     private static final Function<Long, Component> DEFAULT_TEXT_GETTER = value -> new TextComponent(String.format("Value: %d", value));
 
-    public LongSliderListEntry(Component fieldName, long minimum, long maximum, List<Long> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<Long>> saveConsumer, Supplier<List<Long>> defaultValue, long cellDefaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
-        super(fieldName, minimum, maximum, value, defaultExpanded, tooltipSupplier, saveConsumer, defaultValue, cellDefaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, LongSliderListCell::new);
+    public LongSliderListEntry(Component fieldName, long minimum, long maximum, List<Long> value, boolean defaultExpanded, Function<List<Long>, Optional<Component[]>> tooltipGetter, Consumer<List<Long>> saveConsumer, Supplier<List<Long>> defaultValue, long cellDefaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
+        super(fieldName, minimum, maximum, value, defaultExpanded, tooltipGetter, saveConsumer, defaultValue, cellDefaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, LongSliderListCell::new);
         setTextGetter(DEFAULT_TEXT_GETTER);
         cells.forEach(LongSliderListCell::syncValueToSlider);
     }

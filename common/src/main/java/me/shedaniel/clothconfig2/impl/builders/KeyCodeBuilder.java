@@ -38,7 +38,7 @@ import java.util.function.Supplier;
 public class KeyCodeBuilder extends FieldBuilder<ModifierKeyCode, KeyCodeEntry> {
     
     @Nullable private Consumer<ModifierKeyCode> saveConsumer = null;
-    @NotNull private Function<ModifierKeyCode, Optional<Component[]>> tooltipSupplier = bool -> Optional.empty();
+    @NotNull private Function<ModifierKeyCode, Optional<Component[]>> tooltipGetter = keyCode -> Optional.empty();
     private final ModifierKeyCode value;
     private boolean allowKey = true, allowMouse = true, allowModifiers = true;
     
@@ -108,36 +108,45 @@ public class KeyCodeBuilder extends FieldBuilder<ModifierKeyCode, KeyCodeEntry> 
         this.defaultValue = () -> defaultValue;
         return this;
     }
-    
-    public KeyCodeBuilder setTooltipSupplier(@NotNull Function<InputConstants.Key, Optional<Component[]>> tooltipSupplier) {
-        return setModifierTooltipSupplier(keyCode -> tooltipSupplier.apply(keyCode.getKeyCode()));
+
+    public KeyCodeBuilder setTooltipGetter(@NotNull Function<InputConstants.Key, Optional<Component[]>> tooltipGetter) {
+        return setModifierTooltipGetter(keyCode -> tooltipGetter.apply(keyCode.getKeyCode()));
     }
-    
-    public KeyCodeBuilder setModifierTooltipSupplier(@NotNull Function<ModifierKeyCode, Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = tooltipSupplier;
+
+    @Deprecated
+    public KeyCodeBuilder setTooltipSupplier(@NotNull Function<InputConstants.Key, Optional<Component[]>> tooltipGetter) {
+        return setTooltipGetter(tooltipGetter);
+    }
+
+    public KeyCodeBuilder setModifierTooltipGetter(@NotNull Function<ModifierKeyCode, Optional<Component[]>> tooltipGetter) {
+        this.tooltipGetter = tooltipGetter;
         return this;
+    }
+
+    @Deprecated
+    public KeyCodeBuilder setModifierTooltipSupplier(@NotNull Function<ModifierKeyCode, Optional<Component[]>> tooltipGetter) {
+        return setModifierTooltipGetter(tooltipGetter);
     }
     
     public KeyCodeBuilder setTooltipSupplier(@NotNull Supplier<Optional<Component[]>> tooltipSupplier) {
-        this.tooltipSupplier = bool -> tooltipSupplier.get();
+        this.tooltipGetter = keyCode -> tooltipSupplier.get();
         return this;
     }
     
     public KeyCodeBuilder setTooltip(Optional<Component[]> tooltip) {
-        this.tooltipSupplier = bool -> tooltip;
+        this.tooltipGetter = keyCode -> tooltip;
         return this;
     }
     
     public KeyCodeBuilder setTooltip(@Nullable Component... tooltip) {
-        this.tooltipSupplier = bool -> Optional.ofNullable(tooltip);
+        this.tooltipGetter = keyCode -> Optional.ofNullable(tooltip);
         return this;
     }
     
     @NotNull
     @Override
     public KeyCodeEntry build() {
-        KeyCodeEntry entry = new KeyCodeEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, null, isRequireRestart());
-        entry.setTooltipSupplier(() -> tooltipSupplier.apply(entry.getValue()));
+        KeyCodeEntry entry = new KeyCodeEntry(getFieldNameKey(), value, getResetButtonKey(), defaultValue, saveConsumer, tooltipGetter, isRequireRestart());
         if (errorSupplier != null)
             entry.setErrorSupplier(() -> errorSupplier.apply(entry.getValue()));
         entry.setAllowKey(allowKey);

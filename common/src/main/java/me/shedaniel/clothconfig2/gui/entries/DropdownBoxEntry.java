@@ -66,11 +66,17 @@ public class DropdownBoxEntry<T> extends TooltipListEntry<T> {
     @NotNull private final Supplier<T> defaultValue;
     @Nullable private final Consumer<T> saveConsumer;
     private boolean suggestionMode = true;
-    
+
     @ApiStatus.Internal
     @Deprecated
     public DropdownBoxEntry(Component fieldName, @NotNull Component resetButtonKey, @Nullable Supplier<Optional<Component[]>> tooltipSupplier, boolean requiresRestart, @Nullable Supplier<T> defaultValue, @Nullable Consumer<T> saveConsumer, @Nullable Iterable<T> selections, @NotNull SelectionTopCellElement<T> topRenderer, @NotNull SelectionCellCreator<T> cellCreator) {
-        super(fieldName, tooltipSupplier, requiresRestart);
+        this(fieldName, resetButtonKey, supplierAsFunction(tooltipSupplier), requiresRestart, defaultValue, saveConsumer, selections, topRenderer, cellCreator);
+    }
+
+    @ApiStatus.Internal
+    @Deprecated
+    public DropdownBoxEntry(Component fieldName, @NotNull Component resetButtonKey, @Nullable Function<T, Optional<Component[]>> tooltipGetter, boolean requiresRestart, @Nullable Supplier<T> defaultValue, @Nullable Consumer<T> saveConsumer, @Nullable Iterable<T> selections, @NotNull SelectionTopCellElement<T> topRenderer, @NotNull SelectionCellCreator<T> cellCreator) {
+        super(fieldName, tooltipGetter, requiresRestart);
         this.defaultValue = defaultValue;
         this.saveConsumer = saveConsumer;
         this.resetButton = new Button(0, 0, Minecraft.getInstance().font.width(resetButtonKey) + 6, 20, resetButtonKey, widget -> {

@@ -21,8 +21,8 @@ import java.util.function.Supplier;
 public class IntegerSliderListEntry extends AbstractSliderListEntry<Integer, IntegerSliderListEntry.IntegerSliderListCell, IntegerSliderListEntry> {
     private static final Function<Integer, Component> DEFAULT_TEXT_GETTER = value -> new TextComponent(String.format("Value: %d", value));
 
-    public IntegerSliderListEntry(Component fieldName, int minimum, int maximum, List<Integer> value, boolean defaultExpanded, Supplier<Optional<Component[]>> tooltipSupplier, Consumer<List<Integer>> saveConsumer, Supplier<List<Integer>> defaultValue, int cellDefaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
-        super(fieldName, minimum, maximum, value, defaultExpanded, tooltipSupplier, saveConsumer, defaultValue, cellDefaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, IntegerSliderListCell::new);
+    public IntegerSliderListEntry(Component fieldName, int minimum, int maximum, List<Integer> value, boolean defaultExpanded, Function<List<Integer>, Optional<Component[]>> tooltipGetter, Consumer<List<Integer>> saveConsumer, Supplier<List<Integer>> defaultValue, int cellDefaultValue, Component resetButtonKey, boolean requiresRestart, boolean deleteButtonEnabled, boolean insertInFront) {
+        super(fieldName, minimum, maximum, value, defaultExpanded, tooltipGetter, saveConsumer, defaultValue, cellDefaultValue, resetButtonKey, requiresRestart, deleteButtonEnabled, insertInFront, IntegerSliderListCell::new);
         setTextGetter(DEFAULT_TEXT_GETTER);
         cells.forEach(IntegerSliderListCell::syncValueToSlider);
     }
